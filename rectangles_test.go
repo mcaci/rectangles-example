@@ -29,6 +29,14 @@ func BenchmarkRectanglesBaseImprov(b *testing.B) {
 	}
 }
 
+func BenchmarkRectanglesConc(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		for _, tc := range testCases {
+			CountConc(tc.input)
+		}
+	}
+}
+
 func BenchmarkRectanglesFast(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		for _, tc := range testCases {
@@ -41,22 +49,6 @@ func BenchmarkRectanglesFastDoubleAlloc(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		for _, tc := range testCases {
 			CountFastDoubleAlloc(tc.input)
-		}
-	}
-}
-
-func BenchmarkRectanglesConc(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		for _, tc := range testCases {
-			CountConc(tc.input)
-		}
-	}
-}
-
-func BenchmarkRectanglesConcPrefQuad(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		for _, tc := range testCases {
-			CountConcPrefQuad(tc.input)
 		}
 	}
 }

@@ -9,26 +9,26 @@ func Count(in []string) int {
 		for b := a + 1; b < len(edges); b++ {
 			for c := b + 1; c < len(edges); c++ {
 				for d := c + 1; d < len(edges); d++ {
-					if !isRectangle(edges[a], edges[b], edges[c], edges[d]) {
+					switch {
+					case !isRectangle(edges[a], edges[b], edges[c], edges[d]):
+					case !isHorizontalRect(edges[a], edges[b], edges[c], edges[d]):
 						continue
+					default:
+						rectangles = append(rectangles, struct{ a, b, c, d struct{ x, y int } }{a: edges[a], b: edges[b], c: edges[c], d: edges[d]})
 					}
-					if !isPlainRect(edges[a], edges[b], edges[c], edges[d]) {
-						continue
-					}
-					rectangles = append(rectangles, struct{ a, b, c, d struct{ x, y int } }{a: edges[a], b: edges[b], c: edges[c], d: edges[d]})
 				}
 			}
 		}
 	}
 	var count int
 	for _, r := range rectangles {
-		if !isXLinePresent(in)(r.a, r.b, r.c, r.d) {
+		switch {
+		case !isXLinePresent(in)(r.a, r.b, r.c, r.d):
+		case !isYLinePresent(in)(r.a, r.b, r.c, r.d):
 			continue
+		default:
+			count++
 		}
-		if !isYLinePresent(in)(r.a, r.b, r.c, r.d) {
-			continue
-		}
-		count++
 	}
 	return count
 }
@@ -38,15 +38,17 @@ func CountBaseImprov(in []string) int {
 	edges := parseEdges(in)
 
 	var count int
+	xLinePresent := isXLinePresent(in)
+	yLinePresent := isYLinePresent(in)
 	for a := 0; a < len(edges); a++ {
 		for b := a + 1; b < len(edges); b++ {
 			for c := b + 1; c < len(edges); c++ {
 				for d := c + 1; d < len(edges); d++ {
 					switch {
 					case !isRectangle(edges[a], edges[b], edges[c], edges[d]):
-					case !isPlainRect(edges[a], edges[b], edges[c], edges[d]):
-					case !isYLinePresent(in)(edges[a], edges[b], edges[c], edges[d]):
-					case !isXLinePresent(in)(edges[a], edges[b], edges[c], edges[d]):
+					case !isHorizontalRect(edges[a], edges[b], edges[c], edges[d]):
+					case !xLinePresent(edges[a], edges[b], edges[c], edges[d]):
+					case !yLinePresent(edges[a], edges[b], edges[c], edges[d]):
 						continue
 					default:
 						count++

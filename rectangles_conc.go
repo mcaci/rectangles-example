@@ -7,19 +7,13 @@ func CountConc(in []string) int {
 	edges := parseEdges(in)
 
 	var count int
-	xLineCheck := func(a, b struct{ x, y int }, c chan<- bool) {
-		c <- !func(a, b struct{ x, y int }) bool {
-			return linePresent([]byte(in[a.x][a.y:b.y+1]), '-', '+')
-		}(a, b)
-	}
-	yLineCheck := func(a, b struct{ x, y int }, c chan<- bool) {
-		c <- !func(a, b struct{ x, y int }) bool {
-			side := make([]byte, 0)
-			for i := a.x; i <= b.x; i++ {
-				side = append(side, in[i][a.y])
-			}
-			return linePresent(side, '|', '+')
-		}(a, b)
+	xLinePresent := func(a, b struct{ x, y int }) bool { return linePresent([]byte(in[a.x][a.y:b.y+1]), '-', '+') }
+	yLinePresent := func(a, b struct{ x, y int }) bool {
+		side := make([]byte, b.x-a.x+1)
+		for i := range side {
+			side[i] = in[i+a.x][a.y]
+		}
+		return linePresent(side, '|', '+')
 	}
 	for a := 0; a < len(edges); a++ {
 		for b := a + 1; b < len(edges); b++ {
@@ -37,10 +31,11 @@ func CountConc(in []string) int {
 					}
 
 					checkChan := make(chan bool)
-					go xLineCheck(edges[a], edges[b], checkChan)
-					go xLineCheck(edges[c], edges[d], checkChan)
-					go yLineCheck(edges[a], edges[c], checkChan)
-					go yLineCheck(edges[b], edges[d], checkChan)
+					eA, eB, eC, eD := edges[a], edges[b], edges[c], edges[d]
+					go func() { checkChan <- !xLinePresent(eA, eB) }()
+					go func() { checkChan <- !xLinePresent(eC, eD) }()
+					go func() { checkChan <- !yLinePresent(eA, eC) }()
+					go func() { checkChan <- !yLinePresent(eB, eD) }()
 
 					for i := 0; i < 4; i++ {
 						if <-checkChan {
@@ -62,7 +57,7 @@ func CountConcPrefQuad(in []string) int {
 	quadrilaterals := make([]struct{ a, b, c, d struct{ x, y int } }, 0)
 	for a := 0; a < len(edges); a++ {
 		for b := a + 1; b < len(edges); b++ {
-			for c := b + 1; c < len(edges); c++ { 
+			for c := b + 1; c < len(edges); c++ {
 				for d := c + 1; d < len(edges); d++ {
 					if !isHorizontalRect(edges[a], edges[b], edges[c], edges[d]) {
 						continue

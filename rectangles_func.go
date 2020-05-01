@@ -9,7 +9,7 @@ func parseEdges(in []string) []struct{ x, y int } {
 			}
 			edges = append(edges, struct{ x, y int }{x: i, y: j})
 		}
-	} 
+	}
 	return edges
 }
 
@@ -30,9 +30,9 @@ func isXLinePresent(in []string) func(a, b, c, d struct{ x, y int }) bool {
 
 func isYLinePresent(in []string) func(a, b, c, d struct{ x, y int }) bool {
 	f := func(a, b struct{ x, y int }) bool {
-		side := make([]byte, 0)
-		for i := a.x; i <= b.x; i++ {
-			side = append(side, in[i][a.y])
+		side := make([]byte, b.x-a.x+1)
+		for i := range side {
+			side[i] = in[i+a.x][a.y]
 		}
 		return linePresent(side, '|', '+')
 	}

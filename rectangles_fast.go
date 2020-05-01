@@ -1,7 +1,7 @@
 package rectangles
 
-// CountFast counts the number of quadrilaterals drawn from the input
-func CountFast(in []string) int {
+// CountFast1 counts the number of quadrilaterals drawn from the input
+func CountFast1(in []string) int {
 	edges := parseEdges(in)
 
 	var count int

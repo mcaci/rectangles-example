@@ -34,7 +34,7 @@ func Count(in []string) int {
 }
 
 // CountBaseImprov counts the number of rectangles drawn from the input
-func CountBaseImprov(in []string) int {
+func CountBaseImprov1(in []string) int {
 	edges := parseEdges(in)
 
 	var count int
@@ -45,7 +45,7 @@ func CountBaseImprov(in []string) int {
 			for c := b + 1; c < len(edges); c++ {
 				for d := c + 1; d < len(edges); d++ {
 					switch {
-					case !isRectangle(edges[a], edges[b], edges[c], edges[d]):
+					// case !isRectangle(edges[a], edges[b], edges[c], edges[d]):
 					case !isHorizontalRect(edges[a], edges[b], edges[c], edges[d]):
 					case !xLinePresent(edges[a], edges[b], edges[c], edges[d]):
 					case !yLinePresent(edges[a], edges[b], edges[c], edges[d]):

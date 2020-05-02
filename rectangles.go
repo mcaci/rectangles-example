@@ -34,7 +34,7 @@ func Count(in []string) int {
 }
 
 // CountBaseImprov counts the number of rectangles drawn from the input
-func CountBaseImprov1(in []string) int {
+func CountBaseImprov(in []string) int {
 	edges := parseEdges(in)
 
 	var count int

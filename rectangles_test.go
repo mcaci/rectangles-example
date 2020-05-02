@@ -21,18 +21,18 @@ func BenchmarkRectangles(b *testing.B) {
 	}
 }
 
-func BenchmarkRectanglesBaseImprov(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		for _, tc := range testCases {
-			CountBaseImprov(tc.input)
-		}
-	}
-}
-
 func BenchmarkRectanglesConc(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		for _, tc := range testCases {
 			CountConc(tc.input)
+		}
+	}
+}
+
+func BenchmarkRectanglesLowMemory(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		for _, tc := range testCases {
+			CountLowMemory(tc.input)
 		}
 	}
 }
@@ -45,10 +45,10 @@ func BenchmarkRectanglesFast(b *testing.B) {
 	}
 }
 
-func BenchmarkRectanglesFastDoubleAlloc(b *testing.B) {
+func BenchmarkRectanglesFastLowMemory(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		for _, tc := range testCases {
-			CountFastDoubleAlloc(tc.input)
+			CountFastLowMemory(tc.input)
 		}
 	}
 }

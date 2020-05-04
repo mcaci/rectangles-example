@@ -1,7 +1,7 @@
 package rectangles
 
-// CountConc counts the number of quadrilaterals drawn from the input
-func CountConc(in []string) int {
+// CountSidesConc counts the number of quadrilaterals drawn from the input
+func CountSidesConc(in []string) int {
 	edges := parseEdges(in)
 
 	var count int
@@ -39,5 +39,59 @@ func CountConc(in []string) int {
 			}
 		}
 	}
+	return count
+}
+
+// CountEdgeAndSideConc counts the number of quadrilaterals drawn from the input
+func CountEdgeAndSideConc(in []string) int {
+	edges := parseEdges(in)
+
+	var count int
+	xOk := xLinePresent(in)
+	yOk := yLinePresent(in)
+	for a := 0; a < len(edges); a++ {
+		for b := a + 1; b < len(edges); b++ {
+			if !sameX(edges[a], edges[b]) {
+				continue
+			}
+			if !xOk(edges[a], edges[b]) {
+				continue
+			}
+		}
+	}
+
+	for a := 0; a < len(edges); a++ {
+		for b := a + 1; b < len(edges); b++ {
+			if !sameY(edges[a], edges[b]) {
+				continue
+			}
+			if !yOk(edges[a], edges[b]) {
+				continue
+			}
+		}
+	}
+
+	for a := 0; a < len(edges); a++ {
+		for b := a + 1; b < len(edges); b++ {
+			if !sameX(edges[a], edges[b]) {
+				continue
+			}
+			if !xOk(edges[a], edges[b]) {
+				continue
+			}
+		}
+	}
+
+	for a := 0; a < len(edges); a++ {
+		for b := a + 1; b < len(edges); b++ {
+			if !sameX(edges[a], edges[b]) {
+				continue
+			}
+			if !xOk(edges[a], edges[b]) {
+				continue
+			}
+		}
+	}
+
 	return count
 }

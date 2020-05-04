@@ -34,28 +34,6 @@ func yLinePresent(in []string) func(a, b struct{ x, y int }) bool {
 	}
 }
 
-func isXLinePresent(in []string) func(a, b, c, d struct{ x, y int }) bool {
-	f := func(a, b struct{ x, y int }) bool {
-		return linePresent([]byte(in[a.x][a.y:b.y+1]), '-', '+')
-	}
-	return func(a, b, c, d struct{ x, y int }) bool {
-		return f(a, b) && f(c, d)
-	}
-}
-
-func isYLinePresent(in []string) func(a, b, c, d struct{ x, y int }) bool {
-	f := func(a, b struct{ x, y int }) bool {
-		side := make([]byte, b.x-a.x+1)
-		for i := range side {
-			side[i] = in[i+a.x][a.y]
-		}
-		return linePresent(side, '|', '+')
-	}
-	return func(a, b, c, d struct{ x, y int }) bool {
-		return f(a, c) && f(b, d)
-	}
-}
-
 func linePresent(line []byte, lineElems ...byte) bool {
 nextLine:
 	for _, l := range line {
@@ -67,4 +45,18 @@ nextLine:
 		return false
 	}
 	return true
+}
+
+// Not useful for the purpose of the exercise as the sides are only horizontal or vertical
+// isHorizontalRect is a much quicker check under this condition
+func isRectangle(a, b, c, d struct{ x, y int }) bool {
+	center := struct{ x, y float64 }{x: float64(a.x+b.x+c.x+d.x) / 4, y: float64(a.y+b.y+c.y+d.y) / 4}
+
+	sqr := func(x float64) float64 { return x * x }
+	sqrDist := func(a struct{ x, y int }, b struct{ x, y float64 }) float64 {
+		return sqr(b.x-float64(a.x)) + sqr(b.y-float64(a.y))
+	}
+
+	dist := sqrDist(a, center)
+	return dist == sqrDist(b, center) && dist == sqrDist(c, center) && dist == sqrDist(d, center)
 }

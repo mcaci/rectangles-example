@@ -9,22 +9,23 @@ func Count(in []string) int {
 		for b := a + 1; b < len(edges); b++ {
 			for c := b + 1; c < len(edges); c++ {
 				for d := c + 1; d < len(edges); d++ {
-					switch {
-					case !isRectangle(edges[a], edges[b], edges[c], edges[d]):
-					case !isHorizontalRect(edges[a], edges[b], edges[c], edges[d]):
+					if !isHorizontalRect(edges[a], edges[b], edges[c], edges[d]) {
 						continue
-					default:
-						rectangles = append(rectangles, struct{ a, b, c, d struct{ x, y int } }{a: edges[a], b: edges[b], c: edges[c], d: edges[d]})
 					}
+					rectangles = append(rectangles, struct{ a, b, c, d struct{ x, y int } }{a: edges[a], b: edges[b], c: edges[c], d: edges[d]})
 				}
 			}
 		}
 	}
 	var count int
+	xOk := xLinePresent(in)
+	yOk := yLinePresent(in)
 	for _, r := range rectangles {
 		switch {
-		case !isXLinePresent(in)(r.a, r.b, r.c, r.d):
-		case !isYLinePresent(in)(r.a, r.b, r.c, r.d):
+		case !xOk(r.a, r.b):
+		case !xOk(r.c, r.d):
+		case !yOk(r.a, r.c):
+		case !yOk(r.b, r.d):
 			continue
 		default:
 			count++
@@ -33,14 +34,107 @@ func Count(in []string) int {
 	return count
 }
 
-func isRectangle(a, b, c, d struct{ x, y int }) bool {
-	center := struct{ x, y float64 }{x: float64(a.x+b.x+c.x+d.x) / 4, y: float64(a.y+b.y+c.y+d.y) / 4}
+// CountAllEdgesTaken counts the number of rectangles drawn from the input
+func CountAllEdgesTaken(in []string) int {
+	edges := parseEdges(in)
 
-	sqr := func(x float64) float64 { return x * x }
-	sqrDist := func(a struct{ x, y int }, b struct{ x, y float64 }) float64 {
-		return sqr(b.x-float64(a.x)) + sqr(b.y-float64(a.y))
+	var count int
+	xOk := xLinePresent(in)
+	yOk := yLinePresent(in)
+	for a := 0; a < len(edges); a++ {
+		for b := a + 1; b < len(edges); b++ {
+			for c := b + 1; c < len(edges); c++ {
+				for d := c + 1; d < len(edges); d++ {
+					switch {
+					case !sameX(edges[a], edges[b]):
+					case !sameY(edges[a], edges[c]):
+					case !sameX(edges[c], edges[d]):
+					case !sameY(edges[b], edges[d]):
+					case !xOk(edges[a], edges[b]):
+					case !xOk(edges[c], edges[d]):
+					case !yOk(edges[a], edges[c]):
+					case !yOk(edges[b], edges[d]):
+						continue
+					default:
+						count++
+					}
+				}
+			}
+		}
 	}
+	return count
+}
 
-	dist := sqrDist(a, center)
-	return dist == sqrDist(b, center) && dist == sqrDist(c, center) && dist == sqrDist(d, center)
+// CountEdgeAndSideTogether counts the number of quadrilaterals drawn from the input
+func CountEdgeAndSideTogether(in []string) int {
+	edges := parseEdges(in)
+
+	var count int
+	xOk := xLinePresent(in)
+	yOk := yLinePresent(in)
+	for a := 0; a < len(edges); a++ {
+		for b := a + 1; b < len(edges); b++ {
+			if !sameX(edges[a], edges[b]) {
+				continue
+			}
+			if !xOk(edges[a], edges[b]) {
+				continue
+			}
+			for c := b + 1; c < len(edges); c++ {
+				if !sameY(edges[a], edges[c]) {
+					continue
+				}
+				if !yOk(edges[a], edges[c]) {
+					continue
+				}
+				for d := c + 1; d < len(edges); d++ {
+					switch {
+					case !sameX(edges[c], edges[d]):
+					case !xOk(edges[c], edges[d]):
+					case !sameY(edges[b], edges[d]):
+					case !yOk(edges[b], edges[d]):
+						continue
+					default:
+						count++
+					}
+				}
+			}
+		}
+	}
+	return count
+}
+
+// CountEdgesFirst counts the number of quadrilaterals drawn from the input
+func CountEdgesFirst(in []string) int {
+	edges := parseEdges(in)
+
+	var count int
+	xOk := xLinePresent(in)
+	yOk := yLinePresent(in)
+	for a := 0; a < len(edges); a++ {
+		for b := a + 1; b < len(edges); b++ {
+			if !sameX(edges[a], edges[b]) {
+				continue
+			}
+			for c := b + 1; c < len(edges); c++ {
+				if !sameY(edges[a], edges[c]) {
+					continue
+				}
+				for d := c + 1; d < len(edges); d++ {
+					switch {
+					case !sameX(edges[c], edges[d]):
+					case !sameY(edges[b], edges[d]):
+					case !xOk(edges[a], edges[b]):
+					case !xOk(edges[c], edges[d]):
+					case !yOk(edges[a], edges[c]):
+					case !yOk(edges[b], edges[d]):
+						continue
+					default:
+						count++
+					}
+				}
+			}
+		}
+	}
+	return count
 }

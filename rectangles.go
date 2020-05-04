@@ -33,33 +33,6 @@ func Count(in []string) int {
 	return count
 }
 
-// CountBaseImprov counts the number of rectangles drawn from the input
-func CountBaseImprov(in []string) int {
-	edges := parseEdges(in)
-
-	var count int
-	xLinePresent := isXLinePresent(in)
-	yLinePresent := isYLinePresent(in)
-	for a := 0; a < len(edges); a++ {
-		for b := a + 1; b < len(edges); b++ {
-			for c := b + 1; c < len(edges); c++ {
-				for d := c + 1; d < len(edges); d++ {
-					switch {
-					// case !isRectangle(edges[a], edges[b], edges[c], edges[d]):
-					case !isHorizontalRect(edges[a], edges[b], edges[c], edges[d]):
-					case !xLinePresent(edges[a], edges[b], edges[c], edges[d]):
-					case !yLinePresent(edges[a], edges[b], edges[c], edges[d]):
-						continue
-					default:
-						count++
-					}
-				}
-			}
-		}
-	}
-	return count
-}
-
 func isRectangle(a, b, c, d struct{ x, y int }) bool {
 	center := struct{ x, y float64 }{x: float64(a.x+b.x+c.x+d.x) / 4, y: float64(a.y+b.y+c.y+d.y) / 4}
 

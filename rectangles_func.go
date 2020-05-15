@@ -19,22 +19,23 @@ func isHorizontalRect(a, b, c, d struct{ x, y int }) bool {
 	return sameX(a, b) && sameX(c, d) && sameY(a, c) && sameY(b, d)
 }
 
-func xLinePresent(in []string) func(a, b struct{ x, y int }) bool {
-	return func(a, b struct{ x, y int }) bool {
-		return linePresent([]byte(in[a.x][a.y:b.y+1]), '-', '+')
-	}
-}
-func yLinePresent(in []string) func(a, b struct{ x, y int }) bool {
-	return func(a, b struct{ x, y int }) bool {
-		side := make([]byte, b.x-a.x+1)
-		for i := range side {
-			side[i] = in[i+a.x][a.y]
-		}
-		return linePresent(side, '|', '+')
+func xLine(in []string) func(a, b struct{ x, y int }) []byte {
+	return func(a, b struct{ x, y int }) []byte {
+		return []byte(in[a.x][a.y : b.y+1])
 	}
 }
 
-func linePresent(line []byte, lineElems ...byte) bool {
+func yLine(in []string) func(a, b struct{ x, y int }) []byte {
+	return func(a, b struct{ x, y int }) []byte {
+		line := make([]byte, b.x-a.x+1)
+		for i := range line {
+			line[i] = in[i+a.x][a.y]
+		}
+		return line
+	}
+}
+
+func lineFilled(line []byte, lineElems ...byte) bool {
 nextLine:
 	for _, l := range line {
 		for _, lElem := range lineElems {

@@ -5,8 +5,8 @@ func CountSidesConc(in []string) int {
 	edges := parseEdges(in)
 
 	var count int
-	xOk := xLinePresent(in)
-	yOk := yLinePresent(in)
+	xOk := xlineFilled(in)
+	yOk := ylineFilled(in)
 	for a := 0; a < len(edges); a++ {
 		for b := a + 1; b < len(edges); b++ {
 			if !sameX(edges[a], edges[b]) {
@@ -47,8 +47,8 @@ func CountEdgeAndSideConc(in []string) int {
 	edges := parseEdges(in)
 
 	var count int
-	xOk := xLinePresent(in)
-	yOk := yLinePresent(in)
+	xOk := xlineFilled(in)
+	yOk := ylineFilled(in)
 	for a := 0; a < len(edges); a++ {
 		for b := a + 1; b < len(edges); b++ {
 			if !sameX(edges[a], edges[b]) {

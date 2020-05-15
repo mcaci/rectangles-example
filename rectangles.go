@@ -18,8 +18,8 @@ func Count(in []string) int {
 		}
 	}
 	var count int
-	xOk := xLinePresent(in)
-	yOk := yLinePresent(in)
+	xOk := xlineFilled(in)
+	yOk := ylineFilled(in)
 	for _, r := range rectangles {
 		switch {
 		case !xOk(r.a, r.b):
@@ -39,8 +39,8 @@ func CountAllEdgesTaken(in []string) int {
 	edges := parseEdges(in)
 
 	var count int
-	xOk := xLinePresent(in)
-	yOk := yLinePresent(in)
+	x := xLine(in)
+	y := yLine(in)
 	for a := 0; a < len(edges); a++ {
 		for b := a + 1; b < len(edges); b++ {
 			for c := b + 1; c < len(edges); c++ {
@@ -50,10 +50,10 @@ func CountAllEdgesTaken(in []string) int {
 					case !sameY(edges[a], edges[c]):
 					case !sameX(edges[c], edges[d]):
 					case !sameY(edges[b], edges[d]):
-					case !xOk(edges[a], edges[b]):
-					case !xOk(edges[c], edges[d]):
-					case !yOk(edges[a], edges[c]):
-					case !yOk(edges[b], edges[d]):
+					case !lineFilled(x(edges[a], edges[b]), '+', '|'):
+					case !lineFilled(x(edges[c], edges[d]), '+', '|'):
+					case !lineFilled(y(edges[a], edges[c]), '+', '|'):
+					case !lineFilled(y(edges[b], edges[d]), '+', '|'):
 						continue
 					default:
 						count++
@@ -70,8 +70,8 @@ func CountEdgeAndSideTogether(in []string) int {
 	edges := parseEdges(in)
 
 	var count int
-	xOk := xLinePresent(in)
-	yOk := yLinePresent(in)
+	xOk := xlineFilled(in)
+	yOk := ylineFilled(in)
 	for a := 0; a < len(edges); a++ {
 		for b := a + 1; b < len(edges); b++ {
 			if !sameX(edges[a], edges[b]) {
@@ -109,8 +109,8 @@ func CountEdgesFirst(in []string) int {
 	edges := parseEdges(in)
 
 	var count int
-	xOk := xLinePresent(in)
-	yOk := yLinePresent(in)
+	xOk := xlineFilled(in)
+	yOk := ylineFilled(in)
 	for a := 0; a < len(edges); a++ {
 		for b := a + 1; b < len(edges); b++ {
 			if !sameX(edges[a], edges[b]) {

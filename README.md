@@ -2,7 +2,7 @@
 
 ## Profiling the code
 
-This commands can help for the measurement of the performance
+These commands can help to exercise on the measurement of the performance
 Based on [golang's blog article](https://blog.golang.org/pprof).
 
 ```bash

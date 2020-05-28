@@ -18,14 +18,14 @@ func Count(in []string) int {
 		}
 	}
 	var count int
-	xOk := xlineFilled(in)
-	yOk := ylineFilled(in)
+	x := xLine(in)
+	y := yLine(in)
 	for _, r := range rectangles {
 		switch {
-		case !xOk(r.a, r.b):
-		case !xOk(r.c, r.d):
-		case !yOk(r.a, r.c):
-		case !yOk(r.b, r.d):
+		case !lineFilled(x(r.a, r.b)):
+		case !lineFilled(x(r.c, r.d)):
+		case !lineFilled(y(r.a, r.c)):
+		case !lineFilled(y(r.b, r.d)):
 			continue
 		default:
 			count++
@@ -70,29 +70,29 @@ func CountEdgeAndSideTogether(in []string) int {
 	edges := parseEdges(in)
 
 	var count int
-	xOk := xlineFilled(in)
-	yOk := ylineFilled(in)
+	x := xLine(in)
+	y := yLine(in)
 	for a := 0; a < len(edges); a++ {
 		for b := a + 1; b < len(edges); b++ {
 			if !sameX(edges[a], edges[b]) {
 				continue
 			}
-			if !xOk(edges[a], edges[b]) {
+			if !lineFilled(x(edges[a], edges[b])) {
 				continue
 			}
 			for c := b + 1; c < len(edges); c++ {
 				if !sameY(edges[a], edges[c]) {
 					continue
 				}
-				if !yOk(edges[a], edges[c]) {
+				if !lineFilled(y(edges[a], edges[c])) {
 					continue
 				}
 				for d := c + 1; d < len(edges); d++ {
 					switch {
 					case !sameX(edges[c], edges[d]):
-					case !xOk(edges[c], edges[d]):
+					case !lineFilled(x(edges[c], edges[d])):
 					case !sameY(edges[b], edges[d]):
-					case !yOk(edges[b], edges[d]):
+					case !lineFilled(y(edges[b], edges[d])):
 						continue
 					default:
 						count++
@@ -109,8 +109,8 @@ func CountEdgesFirst(in []string) int {
 	edges := parseEdges(in)
 
 	var count int
-	xOk := xlineFilled(in)
-	yOk := ylineFilled(in)
+	x := xLine(in)
+	y := yLine(in)
 	for a := 0; a < len(edges); a++ {
 		for b := a + 1; b < len(edges); b++ {
 			if !sameX(edges[a], edges[b]) {
@@ -124,10 +124,10 @@ func CountEdgesFirst(in []string) int {
 					switch {
 					case !sameX(edges[c], edges[d]):
 					case !sameY(edges[b], edges[d]):
-					case !xOk(edges[a], edges[b]):
-					case !xOk(edges[c], edges[d]):
-					case !yOk(edges[a], edges[c]):
-					case !yOk(edges[b], edges[d]):
+					case !lineFilled(x(edges[a], edges[b])):
+					case !lineFilled(x(edges[c], edges[d])):
+					case !lineFilled(y(edges[a], edges[c])):
+					case !lineFilled(y(edges[b], edges[d])):
 						continue
 					default:
 						count++

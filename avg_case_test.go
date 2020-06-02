@@ -25,7 +25,7 @@ var avgCase = struct {
 
 func TestCountAvg(t *testing.T) {
 	tc := avgCase
-	if actual := Count(tc.input); actual != tc.expected {
+	if actual := CountBase(tc.input); actual != tc.expected {
 		t.Fatalf("FAIL: %s\nExpected: %#v\nActual: %#v", tc.description, tc.expected, actual)
 	}
 	t.Logf("PASS: %s", tc.description)
@@ -34,14 +34,14 @@ func TestCountAvg(t *testing.T) {
 func BenchmarkRectanglesAvg(b *testing.B) {
 	tc := avgCase
 	for i := 0; i < b.N; i++ {
-		Count(tc.input)
+		CountBase(tc.input)
 	}
 }
 
 func BenchmarkRectanglesAllEdgesTakenAvg(b *testing.B) {
 	tc := avgCase
 	for i := 0; i < b.N; i++ {
-		CountAllEdgesTaken(tc.input)
+		CountAll(tc.input)
 	}
 }
 

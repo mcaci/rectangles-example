@@ -1,46 +1,12 @@
 package rectangles
 
-// Count counts the number of quadrilaterals drawn from the input
-func Count(in []string) int {
-	edges := parseEdges(in)
-
-	rectangles := make([]struct{ a, b, c, d struct{ x, y int } }, 0)
-	for a := 0; a < len(edges); a++ {
-		for b := a + 1; b < len(edges); b++ {
-			for c := b + 1; c < len(edges); c++ {
-				for d := c + 1; d < len(edges); d++ {
-					if !isHorizontalRect(edges[a], edges[b], edges[c], edges[d]) {
-						continue
-					}
-					rectangles = append(rectangles, struct{ a, b, c, d struct{ x, y int } }{a: edges[a], b: edges[b], c: edges[c], d: edges[d]})
-				}
-			}
-		}
-	}
-	var count int
-	x := xLine(in)
-	y := yLine(in)
-	for _, r := range rectangles {
-		switch {
-		case !lineFilled(x(r.a, r.b)):
-		case !lineFilled(x(r.c, r.d)):
-		case !lineFilled(y(r.a, r.c)):
-		case !lineFilled(y(r.b, r.d)):
-			continue
-		default:
-			count++
-		}
-	}
-	return count
-}
-
-// CountAllEdgesTaken counts the number of rectangles drawn from the input
-func CountAllEdgesTaken(in []string) int {
+// CountAll counts the number of rectangles drawn from the input
+func CountAll(in []string) int {
 	edges := parseEdges(in)
 
 	var count int
-	x := xLine(in)
-	y := yLine(in)
+	x := drawHorizontals(in)
+	y := drawVerticals(in)
 	for a := 0; a < len(edges); a++ {
 		for b := a + 1; b < len(edges); b++ {
 			for c := b + 1; c < len(edges); c++ {
@@ -50,10 +16,10 @@ func CountAllEdgesTaken(in []string) int {
 					case !sameY(edges[a], edges[c]):
 					case !sameX(edges[c], edges[d]):
 					case !sameY(edges[b], edges[d]):
-					case !lineFilled(x(edges[a], edges[b]), '+', '|'):
-					case !lineFilled(x(edges[c], edges[d]), '+', '|'):
-					case !lineFilled(y(edges[a], edges[c]), '+', '|'):
-					case !lineFilled(y(edges[b], edges[d]), '+', '|'):
+					case !lineFilling(x(edges[a], edges[b])):
+					case !lineFilling(y(edges[a], edges[c])):
+					case !lineFilling(x(edges[c], edges[d])):
+					case !lineFilling(y(edges[b], edges[d])):
 						continue
 					default:
 						count++
@@ -65,76 +31,47 @@ func CountAllEdgesTaken(in []string) int {
 	return count
 }
 
-// CountEdgeAndSideTogether counts the number of quadrilaterals drawn from the input
-func CountEdgeAndSideTogether(in []string) int {
-	edges := parseEdges(in)
-
-	var count int
-	x := xLine(in)
-	y := yLine(in)
-	for a := 0; a < len(edges); a++ {
-		for b := a + 1; b < len(edges); b++ {
-			if !sameX(edges[a], edges[b]) {
+func parseEdges(in []string) []struct{ x, y int } {
+	edges := make([]struct{ x, y int }, 0)
+	for i, line := range in {
+		for j, c := range line {
+			if c != '+' {
 				continue
 			}
-			if !lineFilled(x(edges[a], edges[b])) {
-				continue
-			}
-			for c := b + 1; c < len(edges); c++ {
-				if !sameY(edges[a], edges[c]) {
-					continue
-				}
-				if !lineFilled(y(edges[a], edges[c])) {
-					continue
-				}
-				for d := c + 1; d < len(edges); d++ {
-					switch {
-					case !sameX(edges[c], edges[d]):
-					case !lineFilled(x(edges[c], edges[d])):
-					case !sameY(edges[b], edges[d]):
-					case !lineFilled(y(edges[b], edges[d])):
-						continue
-					default:
-						count++
-					}
-				}
-			}
+			edges = append(edges, struct{ x, y int }{x: i, y: j})
 		}
 	}
-	return count
+	return edges
 }
 
-// CountEdgesFirst counts the number of quadrilaterals drawn from the input
-func CountEdgesFirst(in []string) int {
-	edges := parseEdges(in)
+func drawHorizontals(in []string) func(a, b struct{ x, y int }) struct{ l, c []byte } {
+	return func(a, b struct{ x, y int }) struct{ l, c []byte } {
+		return struct{ l, c []byte }{l: []byte(in[a.x][a.y : b.y+1]), c: []byte{'+', '-'}}
+	}
+}
 
-	var count int
-	x := xLine(in)
-	y := yLine(in)
-	for a := 0; a < len(edges); a++ {
-		for b := a + 1; b < len(edges); b++ {
-			if !sameX(edges[a], edges[b]) {
-				continue
-			}
-			for c := b + 1; c < len(edges); c++ {
-				if !sameY(edges[a], edges[c]) {
-					continue
-				}
-				for d := c + 1; d < len(edges); d++ {
-					switch {
-					case !sameX(edges[c], edges[d]):
-					case !sameY(edges[b], edges[d]):
-					case !lineFilled(x(edges[a], edges[b])):
-					case !lineFilled(x(edges[c], edges[d])):
-					case !lineFilled(y(edges[a], edges[c])):
-					case !lineFilled(y(edges[b], edges[d])):
-						continue
-					default:
-						count++
-					}
-				}
+func drawVerticals(in []string) func(a, b struct{ x, y int }) struct{ l, c []byte } {
+	return func(a, b struct{ x, y int }) struct{ l, c []byte } {
+		line := make([]byte, b.x-a.x+1)
+		for i := range line {
+			line[i] = in[i+a.x][a.y]
+		}
+		return struct{ l, c []byte }{l: line, c: []byte{'+', '-'}}
+	}
+}
+
+func sameX(a, b struct{ x, y int }) bool { return a.x == b.x }
+func sameY(a, b struct{ x, y int }) bool { return a.y == b.y }
+
+func lineFilling(line struct{ l, c []byte }) bool {
+nextLine:
+	for _, char := range line.l {
+		for _, reqChar := range line.c {
+			if char == reqChar {
+				continue nextLine
 			}
 		}
+		return false
 	}
-	return count
+	return true
 }

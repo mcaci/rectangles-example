@@ -23,7 +23,7 @@ var worstCase = struct {
 
 func TestCountWorst(t *testing.T) {
 	tc := worstCase
-	if actual := Count(tc.input); actual != tc.expected {
+	if actual := CountBase(tc.input); actual != tc.expected {
 		t.Fatalf("FAIL: %s\nExpected: %#v\nActual: %#v", tc.description, tc.expected, actual)
 	}
 	t.Logf("PASS: %s", tc.description)
@@ -32,14 +32,14 @@ func TestCountWorst(t *testing.T) {
 func BenchmarkRectanglesWorst(b *testing.B) {
 	tc := worstCase
 	for i := 0; i < b.N; i++ {
-		Count(tc.input)
+		CountBase(tc.input)
 	}
 }
 
 func BenchmarkRectanglesAllEdgesTakenWorst(b *testing.B) {
 	tc := worstCase
 	for i := 0; i < b.N; i++ {
-		CountAllEdgesTaken(tc.input)
+		CountAll(tc.input)
 	}
 }
 

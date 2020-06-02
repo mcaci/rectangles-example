@@ -5,8 +5,8 @@ func CountAll(in []string) int {
 	edges := parseEdges(in)
 
 	var count int
-	x := drawHorizontals(in)
-	y := drawVerticals(in)
+	hLine := lineFilling(drawnLine{points: drawHorizontals(in), reqChars: []byte{'+', '-'}})
+	vLine := lineFilling(drawnLine{points: drawVerticals(in), reqChars: []byte{'+', '|'}})
 	for a := 0; a < len(edges); a++ {
 		for b := a + 1; b < len(edges); b++ {
 			for c := b + 1; c < len(edges); c++ {
@@ -16,10 +16,10 @@ func CountAll(in []string) int {
 					case !sameY(edges[a], edges[c]):
 					case !sameX(edges[c], edges[d]):
 					case !sameY(edges[b], edges[d]):
-					case !lineFilling(x(edges[a], edges[b])):
-					case !lineFilling(y(edges[a], edges[c])):
-					case !lineFilling(x(edges[c], edges[d])):
-					case !lineFilling(y(edges[b], edges[d])):
+					case !hLine(edges[a], edges[b]):
+					case !vLine(edges[a], edges[c]):
+					case !hLine(edges[c], edges[d]):
+					case !vLine(edges[b], edges[d]):
 						continue
 					default:
 						count++
@@ -44,34 +44,41 @@ func parseEdges(in []string) []struct{ x, y int } {
 	return edges
 }
 
-func drawHorizontals(in []string) func(a, b struct{ x, y int }) struct{ l, c []byte } {
-	return func(a, b struct{ x, y int }) struct{ l, c []byte } {
-		return struct{ l, c []byte }{l: []byte(in[a.x][a.y : b.y+1]), c: []byte{'+', '-'}}
+func sameX(a, b struct{ x, y int }) bool { return a.x == b.x }
+func sameY(a, b struct{ x, y int }) bool { return a.y == b.y }
+
+func drawHorizontals(in []string) func(a, b struct{ x, y int }) []byte {
+	return func(a, b struct{ x, y int }) []byte {
+		return []byte(in[a.x][a.y : b.y+1])
 	}
 }
 
-func drawVerticals(in []string) func(a, b struct{ x, y int }) struct{ l, c []byte } {
-	return func(a, b struct{ x, y int }) struct{ l, c []byte } {
+func drawVerticals(in []string) func(a, b struct{ x, y int }) []byte {
+	return func(a, b struct{ x, y int }) []byte {
 		line := make([]byte, b.x-a.x+1)
 		for i := range line {
 			line[i] = in[i+a.x][a.y]
 		}
-		return struct{ l, c []byte }{l: line, c: []byte{'+', '-'}}
+		return line
 	}
 }
 
-func sameX(a, b struct{ x, y int }) bool { return a.x == b.x }
-func sameY(a, b struct{ x, y int }) bool { return a.y == b.y }
+type drawnLine struct {
+	points   func(a, b struct{ x, y int }) []byte
+	reqChars []byte
+}
 
-func lineFilling(line struct{ l, c []byte }) bool {
-nextLine:
-	for _, char := range line.l {
-		for _, reqChar := range line.c {
-			if char == reqChar {
-				continue nextLine
+func lineFilling(line drawnLine) func(a, b struct{ x, y int }) bool {
+	return func(a, b struct{ x, y int }) bool {
+	nextLine:
+		for _, char := range line.points(a, b) {
+			for _, reqChar := range line.reqChars {
+				if char == reqChar {
+					continue nextLine
+				}
 			}
+			return false
 		}
-		return false
+		return true
 	}
-	return true
 }

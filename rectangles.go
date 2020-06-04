@@ -2,24 +2,24 @@ package rectangles
 
 // CountAll counts the number of rectangles drawn from the input
 func CountAll(in []string) int {
-	edges := parseEdges(in)
+	vertices := parseVertices(in)
 
 	var count int
 	hLine := lineFilling(drawnLine{points: drawHorizontals(in), reqChars: []byte{'+', '-'}})
 	vLine := lineFilling(drawnLine{points: drawVerticals(in), reqChars: []byte{'+', '|'}})
-	for a := 0; a < len(edges); a++ {
-		for b := a + 1; b < len(edges); b++ {
-			for c := b + 1; c < len(edges); c++ {
-				for d := c + 1; d < len(edges); d++ {
+	for a := 0; a < len(vertices); a++ {
+		for b := a + 1; b < len(vertices); b++ {
+			for c := b + 1; c < len(vertices); c++ {
+				for d := c + 1; d < len(vertices); d++ {
 					switch {
-					case !sameX(edges[a], edges[b]):
-					case !sameY(edges[a], edges[c]):
-					case !sameX(edges[c], edges[d]):
-					case !sameY(edges[b], edges[d]):
-					case !hLine(edges[a], edges[b]):
-					case !vLine(edges[a], edges[c]):
-					case !hLine(edges[c], edges[d]):
-					case !vLine(edges[b], edges[d]):
+					case !sameX(vertices[a], vertices[b]):
+					case !sameY(vertices[a], vertices[c]):
+					case !sameX(vertices[c], vertices[d]):
+					case !sameY(vertices[b], vertices[d]):
+					case !hLine(vertices[a], vertices[b]):
+					case !vLine(vertices[a], vertices[c]):
+					case !hLine(vertices[c], vertices[d]):
+					case !vLine(vertices[b], vertices[d]):
 						continue
 					default:
 						count++
@@ -31,17 +31,17 @@ func CountAll(in []string) int {
 	return count
 }
 
-func parseEdges(in []string) []struct{ x, y int } {
-	edges := make([]struct{ x, y int }, 0)
+func parseVertices(in []string) []struct{ x, y int } {
+	vertices := make([]struct{ x, y int }, 0)
 	for i, line := range in {
 		for j, c := range line {
 			if c != '+' {
 				continue
 			}
-			edges = append(edges, struct{ x, y int }{x: i, y: j})
+			vertices = append(vertices, struct{ x, y int }{x: i, y: j})
 		}
 	}
-	return edges
+	return vertices
 }
 
 func sameX(a, b struct{ x, y int }) bool { return a.x == b.x }

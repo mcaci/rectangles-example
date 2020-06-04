@@ -2,17 +2,17 @@ package rectangles
 
 // CountBase counts the number of quadrilaterals drawn from the input
 func CountBase(in []string) int {
-	edges := parseEdges(in)
+	vertices := parseVertices(in)
 
 	rectangles := make([]struct{ a, b, c, d struct{ x, y int } }, 0)
-	for a := 0; a < len(edges); a++ {
-		for b := a + 1; b < len(edges); b++ {
-			for c := b + 1; c < len(edges); c++ {
-				for d := c + 1; d < len(edges); d++ {
-					if !isHorizontalRect(edges[a], edges[b], edges[c], edges[d]) {
+	for a := 0; a < len(vertices); a++ {
+		for b := a + 1; b < len(vertices); b++ {
+			for c := b + 1; c < len(vertices); c++ {
+				for d := c + 1; d < len(vertices); d++ {
+					if !isHorizontalRect(vertices[a], vertices[b], vertices[c], vertices[d]) {
 						continue
 					}
-					rectangles = append(rectangles, struct{ a, b, c, d struct{ x, y int } }{a: edges[a], b: edges[b], c: edges[c], d: edges[d]})
+					rectangles = append(rectangles, struct{ a, b, c, d struct{ x, y int } }{a: vertices[a], b: vertices[b], c: vertices[c], d: vertices[d]})
 				}
 			}
 		}
@@ -36,32 +36,32 @@ func CountBase(in []string) int {
 
 // CountEdgeAndSideTogether counts the number of quadrilaterals drawn from the input
 func CountEdgeAndSideTogether(in []string) int {
-	edges := parseEdges(in)
+	vertices := parseVertices(in)
 
 	var count int
 	x := drawHorizontalLine(in)
 	y := drawVerticalLine(in)
-	for a := 0; a < len(edges); a++ {
-		for b := a + 1; b < len(edges); b++ {
-			if !sameX(edges[a], edges[b]) {
+	for a := 0; a < len(vertices); a++ {
+		for b := a + 1; b < len(vertices); b++ {
+			if !sameX(vertices[a], vertices[b]) {
 				continue
 			}
-			if !checkLineFilling(x(edges[a], edges[b]), '+', '-') {
+			if !checkLineFilling(x(vertices[a], vertices[b]), '+', '-') {
 				continue
 			}
-			for c := b + 1; c < len(edges); c++ {
-				if !sameY(edges[a], edges[c]) {
+			for c := b + 1; c < len(vertices); c++ {
+				if !sameY(vertices[a], vertices[c]) {
 					continue
 				}
-				if !checkLineFilling(y(edges[a], edges[c]), '+', '|') {
+				if !checkLineFilling(y(vertices[a], vertices[c]), '+', '|') {
 					continue
 				}
-				for d := c + 1; d < len(edges); d++ {
+				for d := c + 1; d < len(vertices); d++ {
 					switch {
-					case !sameX(edges[c], edges[d]):
-					case !checkLineFilling(x(edges[c], edges[d]), '+', '-'):
-					case !sameY(edges[b], edges[d]):
-					case !checkLineFilling(y(edges[b], edges[d]), '+', '|'):
+					case !sameX(vertices[c], vertices[d]):
+					case !checkLineFilling(x(vertices[c], vertices[d]), '+', '-'):
+					case !sameY(vertices[b], vertices[d]):
+					case !checkLineFilling(y(vertices[b], vertices[d]), '+', '|'):
 						continue
 					default:
 						count++
@@ -75,28 +75,28 @@ func CountEdgeAndSideTogether(in []string) int {
 
 // CountEdgesFirst counts the number of quadrilaterals drawn from the input
 func CountEdgesFirst(in []string) int {
-	edges := parseEdges(in)
+	vertices := parseVertices(in)
 
 	var count int
 	x := drawHorizontalLine(in)
 	y := drawVerticalLine(in)
-	for a := 0; a < len(edges); a++ {
-		for b := a + 1; b < len(edges); b++ {
-			if !sameX(edges[a], edges[b]) {
+	for a := 0; a < len(vertices); a++ {
+		for b := a + 1; b < len(vertices); b++ {
+			if !sameX(vertices[a], vertices[b]) {
 				continue
 			}
-			for c := b + 1; c < len(edges); c++ {
-				if !sameY(edges[a], edges[c]) {
+			for c := b + 1; c < len(vertices); c++ {
+				if !sameY(vertices[a], vertices[c]) {
 					continue
 				}
-				for d := c + 1; d < len(edges); d++ {
+				for d := c + 1; d < len(vertices); d++ {
 					switch {
-					case !sameX(edges[c], edges[d]):
-					case !sameY(edges[b], edges[d]):
-					case !checkLineFilling(x(edges[a], edges[b]), '+', '-'):
-					case !checkLineFilling(x(edges[c], edges[d]), '+', '-'):
-					case !checkLineFilling(y(edges[a], edges[c]), '+', '|'):
-					case !checkLineFilling(y(edges[b], edges[d]), '+', '|'):
+					case !sameX(vertices[c], vertices[d]):
+					case !sameY(vertices[b], vertices[d]):
+					case !checkLineFilling(x(vertices[a], vertices[b]), '+', '-'):
+					case !checkLineFilling(x(vertices[c], vertices[d]), '+', '-'):
+					case !checkLineFilling(y(vertices[a], vertices[c]), '+', '|'):
+					case !checkLineFilling(y(vertices[b], vertices[d]), '+', '|'):
 						continue
 					default:
 						count++
@@ -110,28 +110,28 @@ func CountEdgesFirst(in []string) int {
 
 // CountSidesConc counts the number of quadrilaterals drawn from the input
 func CountSidesConc(in []string) int {
-	edges := parseEdges(in)
+	vertices := parseVertices(in)
 
 	var count int
 	x := drawHorizontalLine(in)
 	y := drawVerticalLine(in)
-	for a := 0; a < len(edges); a++ {
-		for b := a + 1; b < len(edges); b++ {
-			if !sameX(edges[a], edges[b]) {
+	for a := 0; a < len(vertices); a++ {
+		for b := a + 1; b < len(vertices); b++ {
+			if !sameX(vertices[a], vertices[b]) {
 				continue
 			}
-			for c := b + 1; c < len(edges); c++ {
-				if !sameY(edges[a], edges[c]) {
+			for c := b + 1; c < len(vertices); c++ {
+				if !sameY(vertices[a], vertices[c]) {
 					continue
 				}
 			nextVert:
-				for d := c + 1; d < len(edges); d++ {
-					if !sameY(edges[b], edges[d]) || !sameX(edges[c], edges[d]) {
+				for d := c + 1; d < len(vertices); d++ {
+					if !sameY(vertices[b], vertices[d]) || !sameX(vertices[c], vertices[d]) {
 						continue
 					}
 
 					checkChan := make(chan bool)
-					eA, eB, eC, eD := edges[a], edges[b], edges[c], edges[d]
+					eA, eB, eC, eD := vertices[a], vertices[b], vertices[c], vertices[d]
 					go func() { checkChan <- !checkLineFilling(x(eA, eB)) }()
 					go func() { checkChan <- !checkLineFilling(x(eC, eD)) }()
 					go func() { checkChan <- !checkLineFilling(y(eA, eC)) }()

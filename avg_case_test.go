@@ -25,7 +25,7 @@ var avgCase = struct {
 
 func TestCountAvg(t *testing.T) {
 	tc := avgCase
-	if actual := CountBase(tc.input); actual != tc.expected {
+	if actual := CountAll(tc.input); actual != tc.expected {
 		t.Fatalf("FAIL: %s\nExpected: %#v\nActual: %#v", tc.description, tc.expected, actual)
 	}
 	t.Logf("PASS: %s", tc.description)

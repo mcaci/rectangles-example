@@ -23,7 +23,7 @@ var worstCase = struct {
 
 func TestCountWorst(t *testing.T) {
 	tc := worstCase
-	if actual := CountBase(tc.input); actual != tc.expected {
+	if actual := CountAll(tc.input); actual != tc.expected {
 		t.Fatalf("FAIL: %s\nExpected: %#v\nActual: %#v", tc.description, tc.expected, actual)
 	}
 	t.Logf("PASS: %s", tc.description)
